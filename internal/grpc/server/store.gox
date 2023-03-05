@@ -1,0 +1,15 @@
+package server
+
+// for grpc items di mock stores
+import (
+	grpcApi "api"
+)
+
+type BlkStore interface {
+	GetBalance(name string) []grpcApi.Balance
+}
+type WalletStore interface {
+	//GetAccounts(name string) []grpcApi.Account
+	GetWallets(name string) []grpcApi.Wallet
+}
+

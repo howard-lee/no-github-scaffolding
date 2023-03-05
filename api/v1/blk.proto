@@ -1,0 +1,297 @@
+syntax = "proto3";
+
+package api.v1;
+
+// C:\Users\asus\go\bin
+//import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/howard-lee/blockchain/prototype/api_v1";
+
+service Blk {
+
+  rpc GetBalance(AccountRequest) returns (Balance){}
+}
+
+service BlkWallet {
+
+  // rpc Status(Wallet) returns (Response){}
+  // rpc Open(AccountRequest) returns (Response){}
+  // rpc Close(AccountRequest) returns (Response){}
+  // rpc GetAccounts(AccountRequest) returns (Accounts){}
+  // rpc Contains(Account) returns (Response){}
+	//rpc Derive(path DerivationPath, pin bool) (Account, error)
+  //SelfDerive(bases []DerivationPath, chain ethereum.ChainStateReader)
+  //SignData(account Account, mimeType string, data []byte) ([]byte, error) 
+  // SignDataWithPassphrase(account Account, passphrase, mimeType string, data []byte) ([]byte, error)
+  // SignText(account Account, text []byte) ([]byte, error)
+  // SignTextWithPassphrase(account Account, passphrase string, hash []byte) ([]byte, error)
+  // rpc SignTx(txRequest) returns (tx) {}
+	// rpc SignTxWithPassphrase(txRequestWithPhrase) returns (tx){}
+   
+  // rpc BuyToken(TokenTxRequest)returns (Wallets){}
+  // rpc Transfer(TokenTxRequest)returns (Wallets){}
+  rpc GetWallets(AccountRequest) returns (Wallets){}
+}
+
+message Response {
+  uint32 code = 1;
+  string message = 2;
+}
+
+  message LogData {
+    string EventName = 1;
+    //repeated google.protobuf.Any Data = 2;
+    //map<string, google.protobuf.Any> Data = 2;
+  }
+message Genesis {
+  uint32 date = 1;
+  uint32 chainid = 2;
+  uint32 transperblock = 3;
+  uint32 difficulty = 4;
+  uint32 minreward = 5;
+  uint64 gasprice = 6;
+  map<string, int32> balances = 7;
+  //google.protobuf.Timestamp time = 2;
+  //string description = 3;
+}
+
+message Account{
+  string AccountID = 1;
+  uint64 Nounce = 2;
+  uint64 Balance = 3;
+}
+message Accounts {
+  repeated Account accounts =1; 
+}
+message AccountRequest{
+  string account = 1;
+}
+message TokenTxRequest{
+  string AccountID = 1;
+  string Account2ID = 2;
+  uint64 Token = 3;
+}
+message Balance {
+  string account = 1;
+  uint64 balance = 2;
+  Response response = 3;
+}
+
+message Balances {
+  string lastestblock = 1;
+  uint32 uncommited = 2;
+  repeated Balance balances = 3;
+  Response response = 4;
+}
+
+message RealAddress {
+  string street =1;
+  string street2 = 2;
+  string city = 3;
+  string postal = 4;
+  string province = 5;
+  string country = 6;
+  Response response = 7;
+}
+message BookBetInfo {
+  uint32 state = 1;
+  repeated RealAddress participants = 2;
+  Response response = 3;
+}
+
+message TransactionDetails {
+  string Hash    = 1;
+	uint64 Nonce  = 2;           
+	uint64  GasLimit = 3;        
+	string GasOfferPriceGWei = 4;
+	string Value           = 5;
+	string MaxGasPriceGWei   = 6;
+	string MaxGasPriceUSD    = 7;
+  Response response = 8;
+}
+
+message ReceiptDetails {
+  uint64 Status = 1;
+  uint64 GasUsed = 2;
+  string GasPriceGWei = 3;
+  string GasPriceUSD = 4;
+  string FinalCostGWei = 5;
+  string FinalCostUSD = 6;
+  Response response = 7;
+}
+
+message BalanceDiff{
+  string BeforeGWei = 1;
+  string AfterGWei = 2;
+  string DiffGWei = 3;
+  string DiffUSD = 4;
+  Response response = 5;
+}
+
+message Gas {
+  uint64 LastBlock = 1;
+  uint64 SafeGasPrice = 2;  // should be big.int64
+  uint64 ProposeGasPrice = 3;  // should be big.int64
+  uint64 FastGasPrice = 4;  // should be big.int64
+  uint64 SuggestBaseFee = 5;  // should be big.int64
+  Response response = 6;
+}
+
+message Etherscan{
+  string apiKey = 1;
+  string network = 2;
+  string headers = 3;
+  string client = 4;    // a http.clicnt representation
+  Response response = 5;
+}
+
+message DialedBackend {
+  string client = 1; // ethclient.Client representation
+  string string = 2;
+  uint64 chainID = 3;   // big.int
+}
+
+message SimulatedBackend {
+  bool AutoCommit = 2;
+  string network = 3;
+  uint64 chainID = 4; // big.int32
+  repeated string PrivateKeys = 5; // []*ecdsa.PrivateKey
+}
+
+message Client {
+  RealAddress address = 2;  // ????
+  
+}
+
+message ModNScalar {
+  repeated uint32 n = 1;  // n [8]uint32
+}
+
+message FieldVal {
+  repeated uint32 n = 1;  // n [10]uint32
+}
+message PrivateKey {
+  ModNScalar Key = 1;
+  Response response = 2;
+}
+
+message PublicKey {
+  FieldVal x = 1;
+  FieldVal y = 2;
+  Response response = 3;
+}
+
+message LookupResult {
+  int32 StatusCode = 1;
+  //google.protobuf.Any handler = 2;  // HandlerFunc
+  map<string, string> Params = 3;
+  //map<string, google.protobuf.Any> leafHandler = 4; 
+  Response response = 5;
+
+}
+
+message node {
+  string path = 1;
+  uint32 priority = 2;
+  node wildcardChild = 3;
+  node catchAllChild = 4; // catchAllChild *node
+  bool addSlash = 5;
+  bool isCatchAll = 6;
+  bool implicitHead = 7;
+  //map<string, google.protobuf.Any> leafHandler = 8; // leafHandler map[string]HandlerFunc
+  repeated string leafWildcardNames = 9;
+}
+
+// message Group {
+//   string path = 1;
+//   TreeMux mux = 2;  // mux   *TreeMux
+//   //repeated google.protobuf.Any stack = 3;  // stack []MiddlewareFunc
+// }
+// message TreeMux {
+//   node root = 1;  //root  *node
+//   Group group = 2;
+//   //google.protobuf.Any OptionsHandler = 3; // OptionsHandler HandlerFunc
+//   bool HeadCanUseGet = 3;
+//   bool RedirectTrailingSlash = 4;
+//   bool RemoveCatchAllTrailingSlash = 5;
+//   uint32 RedirectBehavior = 6;
+//   map<string, int> RedirectMethodBehavior = 7;   // RedirectMethodBehavior map[string]RedirectBehavior
+
+
+// }
+
+message tx {
+  string FromAccount = 1; // FromAccount database.AccountID 
+  string FromName = 2;
+  string To = 3;    //  database.AccountID `json:"to"`
+  string ToName = 4;
+  uint32 ChainID = 5;
+  uint64 Nonce = 6;
+  uint64 Value = 7;
+  uint64 Tip = 8;
+  repeated bytes Data = 9;
+  uint64 TimeStamp = 10;
+  uint64 GasPrice = 11;
+  uint64 GasUnits = 12;
+  string Sig = 13;
+  repeated string Proof = 14;
+  repeated string ProofOrder = 15;
+
+  Response response = 16;
+
+}
+
+message txRequest {
+  Account account = 1;
+  tx Tx = 2;
+  uint64 chainId = 3;
+
+}
+message txRequestWithPhrase {
+  txRequest request = 1;
+  string phrase = 2;
+}
+message block {
+  uint64 Number = 1;
+  string PrevBlockHash = 2;
+  uint64 TimeStamp = 3;
+  uint64 BeneficiaryID = 4; //  database.AccountID
+  uint32 Difficulty = 5;
+  uint64 MiningReward = 6;
+  string StateRoot = 7;
+  string TransRoot = 8;
+  uint64 Nonce = 9;
+  repeated tx Transactions = 10;
+
+  Response response = 11;
+}
+
+message KeyStore {
+  string storage = 1; // 	storage  keyStore
+  string cache = 2; // cache    *accountCache
+  map<string, string> unlocked = 3; //  unlocked map[common.Address]*unlocked
+  repeated Wallet wallets = 4;
+  string updateFeed = 5; // event.Feed
+  string updateScope = 6; // event.SubscriptionScope
+  bool updating = 7;
+
+  Response response = 8;
+}
+message keystoreWallet {
+  string account = 1; // accounts.Account
+  KeyStore keystore = 2; // keystore *KeyStore
+  Response response = 3;
+}
+
+message Wallet {
+  string WalletID = 1;
+  string URL = 2;
+  uint64   gaslimit = 3; 
+  Response response = 4;
+}
+
+message Wallets {
+  repeated Wallet wallets = 1;
+  Response response = 2;
+
+}
